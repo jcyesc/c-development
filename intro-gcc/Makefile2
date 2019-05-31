@@ -1,0 +1,23 @@
+# The commands to be executed by main are:
+#
+# gcc -I.   -c -o hello-make.o hello-make.c
+# gcc -I.   -c -o hello-print.o hello-print.c
+# gcc -o hello-make hello-make.o hello-print.o
+#
+# Note: If the .h files change, the hellomake rule
+# doesn't include the changes if the *.c files didn't
+# change. See Makefile3 for the fix.
+
+
+# Execute
+#
+# make -f Makefile3
+
+
+CC=gcc
+CFLAGS=-I.
+
+hellomake: hello-make.o hello-print.o
+	$(CC) -o hello-make hello-make.o hello-print.o
+	
+

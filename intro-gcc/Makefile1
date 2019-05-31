@@ -1,0 +1,2 @@
+hello-make: hello-make.c hello-print.c
+	gcc -o hello-make hello-make.c hello-print.c -I.
