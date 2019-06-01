@@ -13,7 +13,6 @@
 #
 # make -f Makefile3
 
-
 CC=gcc
 CFLAGS=-I.
 
