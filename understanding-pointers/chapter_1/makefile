@@ -12,4 +12,5 @@ constants-and-pointers: constants-and-pointers.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
-	rm *.o pointer-related-types multiple-levels-indirection constants-and-pointers 
+	rm *.o pointer-related-types multiple-levels-indirection constants-and-pointers
+ 
