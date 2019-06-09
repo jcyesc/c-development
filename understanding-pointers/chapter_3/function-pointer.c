@@ -86,12 +86,19 @@ void using_array_function_pointers() {
 	operations2['-'] = subtract;
 	printf("%d\n", operations2['+'](45, 60));
 
-	int (*(*ptr_to_an_array_of_ptr_to_func_returning_int)[])(int, int);
-	ptr_to_an_array_of_ptr_to_func_returning_int = &operations2;
-	printf("Same address %p \n", operations2);
-	printf("Same address %p \n", ptr_to_an_array_of_ptr_to_func_returning_int);
-	printf("Same address %p \n", *ptr_to_an_array_of_ptr_to_func_returning_int);
-	printf("%d\n", (*ptr_to_an_array_of_ptr_to_func_returning_int)['+'](1237, 5));
+
+	int (*(*ptr_to_array_of_ptr_to_func_returning_int)[])(int, int);
+	ptr_to_array_of_ptr_to_func_returning_int = &operations2;
+	printf("Same address %p, +1 = %p \n", operations2, (operations2 + 1));
+	printf("Same address %p, +1 = %p \n", ptr_to_array_of_ptr_to_func_returning_int, (*ptr_to_array_of_ptr_to_func_returning_int + 1));
+	printf("Same address %p, +1 = %p \n", *ptr_to_array_of_ptr_to_func_returning_int, (*ptr_to_array_of_ptr_to_func_returning_int + 1));
+	printf("%d\n", (*ptr_to_array_of_ptr_to_func_returning_int)['+'](1237, 5));
+
+	// The line below generates the following error:
+	// error: arithmetic on a pointer to an incomplete type 'int (*[])(int, int)'
+	// printf("Same address %p, +1 = %p \n", ptr_to_array_of_ptr_to_func_returning_int, (ptr_to_array_of_ptr_to_func_returning_int + 1));
+	// This error is fixed by assigning size to the pointer to array of pointers.
+	// int (*(*ptr_to_array_of_ptr_to_func_returning_int)[5])(int, int);
 }
 
 int main() {
@@ -105,4 +112,5 @@ int main() {
 
 	return 0;
 }
+
 
