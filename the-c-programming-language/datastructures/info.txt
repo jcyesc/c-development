@@ -1,0 +1,30 @@
+Data structures
+
+Objectives:
+  Creates an API for the main data structures: Linked List, Queue and Stack.
+  Define a common interface in header files.
+  Create modules for the different data structures.
+
+Description:
+  This folder contains the definition for the linked list and stack. The data
+  structures are defined in their own files.
+
+Structure:
+
+LINKED LIST FILES
+    datastructures.h     It defines the common interface.
+    linklist.c           It contains the implementation of the linked list.
+    mainLinklist.c       It contains the main function.
+    makeList             It contains the linked list make file.
+
+ STACK FILES:
+    datastructures.h     It defines the common interface.
+    stack.c              It contains the implementation fo the stack.
+    linklist.c           It contains the definition of the list that is used in the stack.
+    mainStack.c          It contains the main function.
+    makeStack            It contains the stack make file.
+
+TODO: IMPLEMENT THE DFS AND BFS, IMPLEMENTS THE QUEUE
+
+
+

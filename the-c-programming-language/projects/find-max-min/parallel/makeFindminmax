@@ -1,0 +1,16 @@
+############################################################################################
+# Find Min Max Parallel
+#
+# It compiles the files findminmax_parallel.c, measure.h.
+# The executable contains the parallel program.
+#
+# In order to execute this makefile we run the command:
+#
+# make -f makeFindminmax
+#
+# gcc -o findminmax_parallel measure.h util.h util.c findminmax_parallel.c
+############################################################################################
+
+findmindmax:
+	gcc -o findminmax_parallel measure.h util.h util.c findminmax_parallel.c
+

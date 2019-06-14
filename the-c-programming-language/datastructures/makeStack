@@ -1,0 +1,14 @@
+############################################################################################
+# STACK
+#
+# It compiles the files datastructures.h, linklist.c, stack.c and mainStack.c.
+# The executable contains some examples about the functionality of the Stack.
+#
+# In order to execute this makefile we run the command:
+#
+# make -f makeStack
+#
+############################################################################################
+
+stack:
+	gcc datastructures.h linklist.c stack.c mainStack.c

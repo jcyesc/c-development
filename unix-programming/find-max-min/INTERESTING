@@ -1,0 +1,53 @@
+
+
+When the Parallel program executes more than 10 threads, even if we use the I/O unix
+library (that is not buffered) and use fsync() after executing a writing, We see
+that read() is retrieving garbage (the negative numbers). If we set a delay to read the files
+we don't see these issue.
+
+How can we avoid this without a delay? is something that is avoidable?
+
+Things done to prevent this but that didn't work out:
+	- Use wait
+	- Use fsync
+	- Use no buffered I/O functions: open(), write(), read()
+
+Note:
+	We don't see this behavior with the PIPES.
+
+Posible explanations
+	The memory and CPU are faster, so processor send an instruction to the HD, and before the
+	HD return the first  result, it sends another instruction, but the first instruction hasn't
+	been executed. (Example: Send a WRITE and inmediatly a READ and see the results).
+
+
+./findminmax_parallel 1 400000000 10
+
+Executing Parallel program
+Creating array......
+Initializing array with random data.......
+Setting the Ranges.......
+Executing the processes......
+SON [8287] saving results [50, 2147483632]
+SON [8288] saving results [159, 2147483436]
+SON [8289] saving results [43, 2147483579]
+SON [8290] saving results [96, 2147483609]
+SON [8291] saving results [28, 2147483631]
+SON [8292] saving results [26, 2147483598]
+SON [8293] saving results [12, 2147483607]
+SON [8294] saving results [54, 2147483645]
+SON [8295] saving results [30, 2147483638]
+SON [8296] saving results [135, 2147483642]
+PARENT [8284] is processing results
+
+Data from file [results_8284_8287]: [50, 2147483632]
+Data from file [results_8284_8288]: [159, 2147483436]
+Data from file [results_8284_8289]: [43, -684]
+Data from file [results_8284_8290]: [96, -384]
+Data from file [results_8284_8291]: [28, -164]
+Data from file [results_8284_8292]: [26, -494]
+Data from file [results_8284_8293]: [12, -404]
+Data from file [results_8284_8294]: [54, -24]
+Data from file [results_8284_8295]: [30, -94]
+Data from file [results_8284_8296]: [135, 2147483642]
+PARENT: FINAL RESULT [12, 2147483642]

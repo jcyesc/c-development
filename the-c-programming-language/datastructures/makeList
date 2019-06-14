@@ -1,0 +1,14 @@
+############################################################################################
+# LINKED LIST
+#
+# It compiles the files linklist.c, datastructures.h and mainLinklist.c
+# The executable contains some examples about the functionality of the Linkedlist.
+#
+# In order to execute this makefile we run the command:
+#
+# make -f makeList
+#
+############################################################################################
+
+linkedlist:
+	gcc datastructures.h linklist.c mainLinklist.c
