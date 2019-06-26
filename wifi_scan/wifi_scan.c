@@ -1,9 +1,10 @@
+#include "../wifi_scan/wifi_scan.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
 
-#include "wifi_scan.h"
 
 /**
  * Converts the RSSI value to a given index between 0 and 240.
