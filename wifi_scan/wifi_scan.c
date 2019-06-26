@@ -1,10 +1,9 @@
-#include "../wifi_scan/wifi_scan.h"
+#include "wifi_scan.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-
 
 /**
  * Converts the RSSI value to a given index between 0 and 240.
@@ -19,15 +18,18 @@
  * -99.5      | 239
  * -100       | 240
  *
- * The formula that is used is below
- *  index = -(rssi - 20)/0.5
+ * The formula that is used is below:
+ *
+ * 	index = -(rssi - 20)/0.5
+ *
+ * @param rssi_value The RSSI value that will be converted into
+ * 					 an index.
  */
-static uint8_t getRssiIndex(const float rssi) {
-	assert(rssi <= 20.0 && rssi >= -100.0);
+static uint8_t getRssiIndex(const float rssi_value) {
+	assert(rssi_value <= 20.0 && rssi_value >= -100.0);
 
-	uint8_t index = -(rssi - 20) / 0.5f;
-
-	return index;
+	uint8_t rssi_index = -(rssi_value - 20) / 0.5f;
+	return rssi_index;
 }
 
 /**
@@ -48,51 +50,27 @@ static uint8_t getRssiIndex(const float rssi) {
  * The formula that is used is below:
  *
  *  rssi = 20 - (index * 0.5)
+ *
+ *  @param rssi_index The RSSI index that will be used to calculate the RSSI value.
  */
-static float getRssiValue(const uint8_t index) {
-	assert(index >= 0 && index <= 240);
+static float getRssiValue(const uint8_t rssi_index) {
+	assert(rssi_index >= 0 && rssi_index <= 240);
 
-	float rssi = 20 - (index * 0.5f);
-
-	return rssi;
+	float rssiValue = 20 - (rssi_index * 0.5f);
+	return rssiValue;
 }
 
 /**
- * Synchronously sends the supplied data buffer to the MCU as a single complete
- * packet of data.
+ * Prints the Wifi scan. This function is only used for debugging purposes.
  *
- * @param data Buffer to transmit
- * @param len Number of bytes to send
+ * @param ap_count  Number of access points in the scan result, and the size of the
+ * 				    following list.
+ * @param ssid_list List of SSIDs, given as an array of pointers null-terminated
+ * 					ASCII strings.
+ * @param bssid_list List of BSSIDs, given as an array of 6-byte arrays.
+ * @param rssi_list  List of RSSIs
  */
-void transmitPacket(const void *data, size_t len) {
-	printf("\n===================================");
-	printf("\nTransmitting packet");
-	printf("\n===================================");
-
-	WifiScanContent *wifi_scan = (WifiScanContent *) data;
-	size_t ap_count = len / sizeof(WifiScanContent);
-
-	for (uint8_t index = 0; index < ap_count; index++) {
-		printf("\n\nWifi Scan - %hhu", index);
-
-		printf("\n\tName: %s", wifi_scan->ssid);
-
-		printf("\n\tNetwork Id: ");
-		for (uint8_t i = 0; i < NETWORK_ID_SIZE; i++) {
-			printf("Ox%x ", wifi_scan->bssid[i]);
-		}
-
-		float rssid = getRssiValue(wifi_scan->rssi_index);
-		printf("\n\tSignal Strength (SSID): %f", rssid);
-
-		wifi_scan++;
-	}
-
-	printf("\nEnd of the transmission \n");
-	free((void *) data);
-}
-
-void printfWifiScan(size_t ap_count, const char **ssid_list,
+static void printfWifiScan(size_t ap_count, const char **ssid_list,
 		const uint8_t **bssid_list, const float *rssi_list) {
 	printf("\nData to be processed");
 	printf("\n\tNumber of scans %zu", ap_count);
@@ -105,8 +83,8 @@ void printfWifiScan(size_t ap_count, const char **ssid_list,
 	printf("\n\tBSSI list");
 	for (uint8_t i = 0; i < ap_count; i++) {
 		printf("\n\t\tList - %hhu \n\t\t", i);
-		for (uint8_t index = 0; index < NETWORK_ID_SIZE; index++) {
-			printf("0x%x ", bssid_list[i][index]);
+		for (uint8_t j = 0; j < NETWORK_ID_SIZE; j++) {
+			printf("0x%x ", bssid_list[i][j]);
 		}
 	}
 
@@ -116,6 +94,41 @@ void printfWifiScan(size_t ap_count, const char **ssid_list,
 	}
 
 	printf("\n");
+}
+
+/**
+ * Synchronously sends the supplied data buffer to the MCU as a single complete
+ * packet of data.
+ *
+ * @param data Buffer to transmit
+ * @param len Number of bytes to send
+ */
+static void transmitPacket(const void *data, size_t len) {
+	printf("\n===================================");
+	printf("\nTransmitting packet");
+	printf("\n===================================");
+
+	// This is how the MCU would decode the information.
+	WifiScanContent *wifi_scan = (WifiScanContent *) data;
+	size_t ap_count = len / sizeof(WifiScanContent);
+
+	for (uint8_t i = 0; i < ap_count; i++) {
+		printf("\n\nWifi Scan - %hhu", i);
+		printf("\n\tName: %s", wifi_scan->ssid);
+		printf("\n\tNetwork Id: ");
+		for (uint8_t j = 0; j < NETWORK_ID_SIZE; j++) {
+			printf("Ox%x ", wifi_scan->bssid[j]);
+		}
+
+		float rssid = getRssiValue(wifi_scan->rssi_index);
+		printf("\n\tSignal Strength (SSID): %f", rssid);
+
+		wifi_scan++;
+	}
+
+	free((void *) data);
+
+	printf("\n\nEnd of the transmission .....\n");
 }
 
 /**
@@ -142,36 +155,19 @@ void sendWifiScanResult(size_t ap_count, const char **ssid_list,
 	const void *data = (void *) malloc(data_size);
 
 	WifiScanContent *wifi_scan = (WifiScanContent *) data;
-	for (uint8_t index = 0; index < ap_count; index++) {
-		assert(strlen(ssid_list[index]) <= SSID_LENGTH);
+	for (uint8_t i = 0; i < ap_count; i++) {
+		assert(strlen(ssid_list[i]) <= SSID_LENGTH);
+		strcpy(wifi_scan->ssid, ssid_list[i]);
+		wifi_scan->rssi_index = getRssiIndex(rssi_list[i]);
 
-		strcpy(wifi_scan->ssid, ssid_list[index]);
-		wifi_scan->rssi_index = getRssiIndex(rssi_list[index]);
-
-		for (uint8_t i = 0; i < NETWORK_ID_SIZE; i++) {
-			wifi_scan->bssid[i] = bssid_list[index][i];
+		for (uint8_t j = 0; j < NETWORK_ID_SIZE; j++) {
+			wifi_scan->bssid[j] = bssid_list[i][j];
 		}
 
 		wifi_scan++;
 	}
-
 	printf("\nFinish encoding...\n");
 
 	transmitPacket(data, data_size);
-}
-
-int main() {
-	printf("\nScanning and transmitting\n");
-
-	const size_t kAccessPointCount = 2;
-	const char *ssid_list[kAccessPointCount] = { "abc", "x" };
-	const uint8_t bssid1[6] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
-	const uint8_t bssid2[6] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
-	const uint8_t *bssid_list[kAccessPointCount] = { bssid1, bssid2 };
-	const float rssi_list[kAccessPointCount] = { -48.0, -50.5 };
-
-	sendWifiScanResult(kAccessPointCount, ssid_list, bssid_list, rssi_list);
-
-	return 0;
 }
 
