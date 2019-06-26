@@ -1,12 +1,5 @@
 #include <stdio.h>
 
-/*
- * array_structs.c
- *
- *  Created on: Sep 22, 2013
- *      Author: jcyescas
- */
-
 #define SIZE_ACCOUNTS 3
 
 struct Account {

@@ -1,7 +1,3 @@
-/*
- * main.c
- *      Author: jcyescas
- */
 
 #include <stdio.h>
 #include <sys/types.h>

@@ -1,9 +1,3 @@
-/*
- * inodes.c
- *
- *  Created on: Nov 29, 2013
- *      Author: jcyescas
- */
 
 #include <stdio.h>
 #include <stdint.h>
