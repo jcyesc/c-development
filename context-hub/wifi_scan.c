@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,12 +6,11 @@
 #define NETWORK_ID_SIZE 6
 #define SSID_LENGTH 32
 
-
 typedef struct WifiScan {
-	char ssid [SSID_LENGTH]; // Network name (SSID), consisting of up to 32 ASCII characters
+	char ssid[SSID_LENGTH]; // Network name (SSID), consisting of up to 32 ASCII characters
 	uint8_t bssid[NETWORK_ID_SIZE]; // Network ID (BSSID), consisting of 6 bytes
 	uint8_t rssi_index; // Represents the index of Signal strength (RSSI)(a number ranging from 20 to -100).
-					   // The index 0 represents 20, the index 40 represents 0, the index 240 represents 100.
+						// The index 0 represents 20, the index 40 represents 0, the index 240 represents 100.
 } WifiScanContent;
 
 /**
@@ -32,7 +30,7 @@ typedef struct WifiScan {
  *  index = -(rssi - 20)/0.5
  */
 static uint8_t getRssiIndex(const float rssi) {
-	assert(rssi <= 20 && rssi >= -100);
+	assert(rssi <= 20.0 && rssi >= -100.0);
 
 	uint8_t index = -(rssi - 20) / 0.5f;
 
@@ -74,29 +72,54 @@ static float getRssiValue(const uint8_t index) {
  * @param len Number of bytes to send
  */
 void transmitPacket(const void *data, size_t len) {
-	// You do *not* need to implement this function, but should call it from
-	// sendWifiScanResult();
-}
+	printf("\n===================================");
+	printf("\nTransmitting packet");
+	printf("\n===================================");
 
-void printfWifiScan(size_t ap_count, const char **ssid_list, const uint8_t **bssid_list, const float *rssi_list) {
-	printf("\nNumber of scans %zu", ap_count);
+	WifiScanContent *wifi_scan = (WifiScanContent *) data;
+	size_t ap_count = len / sizeof(WifiScanContent);
 
-	printf("\nSSI list");
-	for (uint8_t i = 0; i < ap_count; i++) {
-		printf("\n%hhu %s", i, ssid_list[i]);
+	for (uint8_t index = 0; index < ap_count; index++) {
+		printf("\n\nWifi Scan - %hhu", index);
+
+		printf("\n\tName: %s", wifi_scan->ssid);
+
+		printf("\n\tNetwork Id: ");
+		for (uint8_t i = 0; i < NETWORK_ID_SIZE; i++) {
+			printf("Ox%x ", wifi_scan->bssid[i]);
+		}
+
+		float rssid = getRssiValue(wifi_scan->rssi_index);
+		printf("\n\tSignal Strength (SSID): %f", rssid);
+
+		wifi_scan++;
 	}
 
-	printf("\nBSSI list");
+	printf("\nEnd of the transmission \n");
+	free((void *) data);
+}
+
+void printfWifiScan(size_t ap_count, const char **ssid_list,
+		const uint8_t **bssid_list, const float *rssi_list) {
+	printf("\nData to be processed");
+	printf("\n\tNumber of scans %zu", ap_count);
+
+	printf("\n\tSSI list");
 	for (uint8_t i = 0; i < ap_count; i++) {
-		printf("\n\tList -  %hhu \n\t", i);
+		printf("\n\t\tssid[%hhu] = %s", i, ssid_list[i]);
+	}
+
+	printf("\n\tBSSI list");
+	for (uint8_t i = 0; i < ap_count; i++) {
+		printf("\n\t\tList - %hhu \n\t\t", i);
 		for (uint8_t index = 0; index < NETWORK_ID_SIZE; index++) {
-			printf("Ox%x ", bssid_list[i][index]);
+			printf("0x%x ", bssid_list[i][index]);
 		}
 	}
 
-	printf("\nRSSI list");
+	printf("\n\tRSSI list");
 	for (uint8_t i = 0; i < ap_count; i++) {
-		printf("\n%hhu %f", i, rssi_list[i]);
+		printf("\n\t\trssi[%hhu] = %f", i, rssi_list[i]);
 	}
 
 	printf("\n");
@@ -114,37 +137,45 @@ void printfWifiScan(size_t ap_count, const char **ssid_list, const uint8_t **bss
  * @param bssid_list List of BSSIDs, given as an array of 6-byte arrays.
  * @param rssi_list  List of RSSIs
  */
-void sendWifiScanResult(size_t ap_count, const char **ssid_list, const uint8_t **bssid_list, const float *rssi_list) {
+void sendWifiScanResult(size_t ap_count, const char **ssid_list,
+		const uint8_t **bssid_list, const float *rssi_list) {
+	printf("\n===================================");
+	printf("\nProcessing Wifi Scan");
+	printf("\n===================================");
 	printfWifiScan(ap_count, ssid_list, bssid_list, rssi_list);
 
 	// Assuming that have malloc
 	size_t data_size = sizeof(WifiScanContent) * ap_count;
 	const void *data = (void *) malloc(data_size);
 
-	WifiScanContent *wifiScan = (WifiScanContent *) data;
+	WifiScanContent *wifi_scan = (WifiScanContent *) data;
 	for (uint8_t index = 0; index < ap_count; index++) {
 		assert(strlen(ssid_list[index]) <= SSID_LENGTH);
 
-		strcpy(wifiScan->ssid, ssid_list[index]);
+		strcpy(wifi_scan->ssid, ssid_list[index]);
+		wifi_scan->rssi_index = getRssiIndex(rssi_list[index]);
 
-		wifiScan->rssi_index = getRssiIndex(rssi_list[ap_count]);
+		for (uint8_t i = 0; i < NETWORK_ID_SIZE; i++) {
+			wifi_scan->bssid[i] = bssid_list[index][i];
+		}
 
-		wifiScan++;
+		wifi_scan++;
 	}
+
+	printf("\nFinish encoding...\n");
 
 	transmitPacket(data, data_size);
 }
-
 
 int main() {
 	printf("\nScanning and transmitting\n");
 
 	const size_t kAccessPointCount = 2;
-	const char *ssid_list[kAccessPointCount] = {"abc", "x"};
-	const uint8_t bssid1[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
-	const uint8_t bssid2[6] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
-	const uint8_t *bssid_list[kAccessPointCount] = {bssid1, bssid2};
-	const float rssi_list[kAccessPointCount] = {-48.0, -50.5};
+	const char *ssid_list[kAccessPointCount] = { "abc", "x" };
+	const uint8_t bssid1[6] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
+	const uint8_t bssid2[6] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	const uint8_t *bssid_list[kAccessPointCount] = { bssid1, bssid2 };
+	const float rssi_list[kAccessPointCount] = { -48.0, -50.5 };
 
 	sendWifiScanResult(kAccessPointCount, ssid_list, bssid_list, rssi_list);
 
