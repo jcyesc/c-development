@@ -3,15 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#define NETWORK_ID_SIZE 6
-#define SSID_LENGTH 32
-
-typedef struct WifiScan {
-	char ssid[SSID_LENGTH]; // Network name (SSID), consisting of up to 32 ASCII characters
-	uint8_t bssid[NETWORK_ID_SIZE]; // Network ID (BSSID), consisting of 6 bytes
-	uint8_t rssi_index; // Represents the index of Signal strength (RSSI)(a number ranging from 20 to -100).
-						// The index 0 represents 20, the index 40 represents 0, the index 240 represents 100.
-} WifiScanContent;
+#include "wifi_scan.h"
 
 /**
  * Converts the RSSI value to a given index between 0 and 240.
@@ -144,7 +136,7 @@ void sendWifiScanResult(size_t ap_count, const char **ssid_list,
 	printf("\n===================================");
 	printfWifiScan(ap_count, ssid_list, bssid_list, rssi_list);
 
-	// Assuming that have malloc
+	// Assuming that we can use malloc
 	size_t data_size = sizeof(WifiScanContent) * ap_count;
 	const void *data = (void *) malloc(data_size);
 
