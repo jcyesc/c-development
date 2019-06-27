@@ -108,7 +108,7 @@ static void printWifiScanInHex(const void *data, size_t len) {
 	char *ptr = (char *) data;
 	for (uint8_t i = 0; i < len; i++) {
 		if (i != 0 && i % 10 == 0) {
-					printf("\n\t\t");
+			printf("\n\t\t");
 		}
 		printf("Ox%x ", *ptr++);
 	}
@@ -141,7 +141,7 @@ static void transmitPacket(const void *data, size_t len) {
 		printf("\n\tSignal Strength (SSID): %f", rssid);
 
 		printf("\n\tHexadecimal \n");
-		printWifiScanInHex((const void *)wifi_scan, sizeof(WifiScanContent));
+		printWifiScanInHex((const void *) wifi_scan, sizeof(WifiScanContent));
 
 		wifi_scan++;
 	}
