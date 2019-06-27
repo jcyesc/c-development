@@ -39,7 +39,7 @@
  * The current WifiScan struct uses 39 bytes to store all the information. If we have
  * a maximum of 200 scans, we will be using 7,800 bytes or 7.8KB. Assuming that in
  * average the SSI is 10 bytes (including the `\0` at the end of the string),
- * the layout from above will use  3400 bytes or 3.4KB ((6 bytes + 1 byte + 10 bytes) * 200)
+ * the layout from above will use 3400 bytes or 3.4KB ((6 bytes + 1 byte + 10 bytes) * 200)
  * which is half the size of the memory used by an array of WifiScans.
  */
 typedef struct WifiScan {
