@@ -100,7 +100,7 @@ static void printfWifiScan(size_t ap_count, const char **ssid_list,
  * Prints the data in hexadecimal.
  *
  * @param data Represents a pointer to the data to be printed.
- * @param len Number of bytes to send
+ * @param len Number of bytes to print
  */
 static void printWifiScanInHex(const void *data, size_t len) {
 	printf("\t\t");
