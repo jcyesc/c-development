@@ -107,10 +107,10 @@ static void printWifiScanInHex(const void *data, size_t len) {
 
 	char *ptr = (char *) data;
 	for (uint8_t i = 0; i < len; i++) {
-		printf("Ox%x ", *ptr++);
 		if (i != 0 && i % 10 == 0) {
-			printf("\n\t\t");
+					printf("\n\t\t");
 		}
+		printf("Ox%x ", *ptr++);
 	}
 }
 
