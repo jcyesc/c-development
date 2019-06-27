@@ -31,6 +31,7 @@ make clean
 The output of this program will be:
 
 ```
+
 Scanning and transmitting.....
 
 ===================================
@@ -60,11 +61,21 @@ Wifi Scan - 0
         Name: abc
         Network Id: Ox1 Ox2 Ox3 Ox4 Ox5 Ox6 
         Signal Strength (SSID): -48.000000
+        Hexadecimal 
+                Ox61 Ox62 Ox63 Ox0 Ox0 Ox0 Ox0 Oxffffffb0 Ox0 Ox0 Ox0 
+                Ox0 Ox0 Ox0 Ox0 Oxffffffb0 Ox6 Ox0 Ox0 Ox0 Ox0 
+                Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 
+                Ox0 Ox1 Ox2 Ox3 Ox4 Ox5 Ox6 Oxffffff88 
 
 Wifi Scan - 1
         Name: x
         Network Id: Ox11 Ox22 Ox33 Ox44 Ox55 Ox66 
         Signal Strength (SSID): -50.500000
+        Hexadecimal 
+                Ox78 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 
+                Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 
+                Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 Ox0 
+                Ox0 Ox11 Ox22 Ox33 Ox44 Ox55 Ox66 Oxffffff8d 
 
 End of the transmission .....
 

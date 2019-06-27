@@ -97,6 +97,24 @@ static void printfWifiScan(size_t ap_count, const char **ssid_list,
 }
 
 /**
+ * Prints the data in hexadecimal.
+ *
+ * @param data Represents a pointer to the data to be printed.
+ * @param len Number of bytes to send
+ */
+static void printWifiScanInHex(const void *data, size_t len) {
+	printf("\t\t");
+
+	char *ptr = (char *) data;
+	for (uint8_t i = 0; i < len; i++) {
+		printf("Ox%x ", *ptr++);
+		if (i != 0 && i % 10 == 0) {
+			printf("\n\t\t");
+		}
+	}
+}
+
+/**
  * Synchronously sends the supplied data buffer to the MCU as a single complete
  * packet of data.
  *
@@ -111,7 +129,6 @@ static void transmitPacket(const void *data, size_t len) {
 	// This is how the MCU would decode the information.
 	WifiScanContent *wifi_scan = (WifiScanContent *) data;
 	size_t ap_count = len / sizeof(WifiScanContent);
-
 	for (uint8_t i = 0; i < ap_count; i++) {
 		printf("\n\nWifi Scan - %hhu", i);
 		printf("\n\tName: %s", wifi_scan->ssid);
@@ -122,6 +139,9 @@ static void transmitPacket(const void *data, size_t len) {
 
 		float rssid = getRssiValue(wifi_scan->rssi_index);
 		printf("\n\tSignal Strength (SSID): %f", rssid);
+
+		printf("\n\tHexadecimal \n");
+		printWifiScanInHex((const void *)wifi_scan, sizeof(WifiScanContent));
 
 		wifi_scan++;
 	}
