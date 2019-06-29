@@ -11,5 +11,8 @@ restrict-keyword: restrict-keyword.o
 opaque-main: opaque-pointer.o opaque-main.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
+polymorphism: polymorphism.o
+	$(CC) -o $@ $^ $(CFLAGS)
+
 clean:
-	rm *.o endianness restrict-keyword opaque-main
+	rm *.o endianness restrict-keyword opaque-main polymorphism
